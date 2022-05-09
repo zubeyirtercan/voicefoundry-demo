@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+    ConnectInstanceARN:
+        Type: String
+        Description: Please enter the full ARN of the existing Amazon Connect Instance
+
+Resources:
+
+  FunctionsBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: "voicefoundry-functions"
+
+  vanityNumbersTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: vanityNumbers
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: phoneNumber
+          AttributeType: S
+        - AttributeName: recordDate
+          AttributeType: N
+      KeySchema:
+        - AttributeName: phoneNumber
+          KeyType: HASH
+        - AttributeName: recordDate
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 0
+        WriteCapacityUnits: 0
+  
+  DemoContactFlow:
+    Type: 'AWS::Connect::ContactFlow'
+    Properties:
+      Name: Voice Foundry Demo ContactFlow
+      Description: This demo flow has been created as a placeholder. Please replate it with the actual flow by importing the JSON file
+      InstanceArn: !Ref ConnectInstanceARN
+      Type: CONTACT_FLOW
+      Content: "{\"Version\":\"2019-10-30\",\"StartAction\":\"32e5247f-7929-44f5-93f5-605ce2317b2c\",\"Actions\":[{\"Identifier\":\"32e5247f-7929-44f5-93f5-605ce2317b2c\",\"Type\":\"MessageParticipant\",\"Transitions\":{\"NextAction\":\"5fa06901-2fc6-4056-a698-97cfb7c6782a\",\"Errors\":[],\"Conditions\":[]},\"Parameters\":{\"Text\":\"Thanks for calling the basic flow!\"}},{\"Identifier\":\"5fa06901-2fc6-4056-a698-97cfb7c6782a\",\"Type\":\"DisconnectParticipant\",\"Transitions\":{},\"Parameters\":{}}]}"
+
+  VoiceFoundryLambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: voicefoundry-lambda-role
+      Description: VoiceFoundry Lambda execution role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Policies:
+        - PolicyName: voicefoundry-inline-policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:*"
+                  - "dynamodb:*"
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: '*'
+
+  VanityNumbersLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: generate-vanity-numbers-ts
+      Handler: index.handler
+      Role: !GetAtt VoiceFoundryLambdaRole.Arn
+      Code:
+        S3Bucket: voicefoundry-zubeyir
+        S3Key: generate-vanity-numbers-ts.zip
+      Runtime: nodejs14.x
+      Timeout: 3
+
+  VanityNumbersConnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref VanityNumbersLambdaFunction
+      Action: "lambda:InvokeFunction"
+      Principal: 'connect.amazonaws.com'
+
+  WebpageLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      FunctionName: webpage-ts
+      Handler: app.lambdaHandler
+      Role: !GetAtt VoiceFoundryLambdaRole.Arn
+      Code:
+        S3Bucket: voicefoundry-zubeyir
+        S3Key: webpage-ts.zip
+      Runtime: nodejs14.x
+      Timeout: 3
+  
+  WebpageFunctionURL:
+      Type: AWS::Lambda::Url
+      Properties: 
+        AuthType: NONE
+        TargetFunctionArn: !GetAtt WebpageLambdaFunction.Arn
+
+  LambdaFunctionURLPermission:
+     Type: AWS::Lambda::Permission
+     Properties:
+       FunctionName: !Ref WebpageLambdaFunction
+       FunctionUrlAuthType: 'NONE'
+       Action: lambda:InvokeFunctionUrl
+       Principal: '*'
+
+Outputs:
+  WebpageURL:
+    Description: The URL of the dynamic webpage to display last 5 calls to the flow
+    Value: !GetAtt WebpageFunctionURL.FunctionUrl
