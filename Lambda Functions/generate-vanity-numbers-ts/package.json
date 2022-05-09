@@ -1,0 +1,31 @@
+{
+  "name": "generate-vanity-numbers-ts",
+  "description": "Generates vanity numbers and saves them to DynamoDB",
+  "version": "1.0.0",
+  "author": "Zubeyir Tercan",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install && tsc",
+    "copy": "copy src\\AcronymKeys.csv build && xcopy node_modules\\ build\\node_modules\\ /e /y /d",
+    "zip": "7z a -tzip deploy\\generate-vanity-numbers-ts.zip .\\build\\*",
+    "s3-upload": "aws s3 cp .\\deploy\\generate-vanity-numbers-ts.zip s3://voicefoundry-functions",
+    "lambda-update": "aws lambda update-function-code --function-name generate-vanity-numbers-ts --s3-bucket voicefoundry-functions --s3-key generate-vanity-numbers-ts.zip",
+    "deploy": "npm run build && npm run copy && npm run zip && npm run s3-upload && npm run lambda-update"
+  },
+  "dependencies": {
+    "@types/node": "^17.0.25",
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1118.0",
+    "fs": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.39",
+    "clean-dir": "1.0.3",
+    "ts-node": "8.6.2",
+    "typescript": "3.7.4"
+  },
+  "engines": {
+    "node": "~8.17.0",
+    "npm": "~6.13.0"
+  }
+}
