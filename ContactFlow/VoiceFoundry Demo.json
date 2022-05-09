@@ -1,0 +1,193 @@
+{
+    "modules": [
+        {
+            "id": "12b072c1-c677-4a35-b118-b68310ac21e1",
+            "type": "Disconnect",
+            "branches": [],
+            "parameters": [],
+            "metadata": {
+                "position": {
+                    "x": 1441,
+                    "y": 492
+                }
+            }
+        },
+        {
+            "id": "b9aa600e-34b7-4150-a100-b5a7302597f6",
+            "type": "PlayPrompt",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "dae5a818-7797-4d66-93bf-87b031141f7d"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "dae5a818-7797-4d66-93bf-87b031141f7d"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Text",
+                    "value": "Function call failed",
+                    "namespace": null
+                },
+                {
+                    "name": "TextToSpeechType",
+                    "value": "text"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 864,
+                    "y": 431
+                },
+                "useDynamic": false
+            }
+        },
+        {
+            "id": "234ea044-b4a4-4970-95ce-5ed632c3f67f",
+            "type": "PlayPrompt",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "780512e7-ad3b-4bd9-9d16-0eeeb5ecf648"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "780512e7-ad3b-4bd9-9d16-0eeeb5ecf648"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Text",
+                    "value": "Welcome to VoiceFoundry!",
+                    "namespace": null
+                },
+                {
+                    "name": "TextToSpeechType",
+                    "value": "text"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 233,
+                    "y": 45
+                },
+                "useDynamic": false
+            }
+        },
+        {
+            "id": "dae5a818-7797-4d66-93bf-87b031141f7d",
+            "type": "PlayPrompt",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "12b072c1-c677-4a35-b118-b68310ac21e1"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "12b072c1-c677-4a35-b118-b68310ac21e1"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Text",
+                    "value": "Goodbye",
+                    "namespace": null
+                },
+                {
+                    "name": "TextToSpeechType",
+                    "value": "text"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 1166,
+                    "y": 380
+                },
+                "useDynamic": false
+            }
+        },
+        {
+            "id": "780512e7-ad3b-4bd9-9d16-0eeeb5ecf648",
+            "type": "InvokeExternalResource",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "82d28644-1bd0-4eef-8a42-eddf184a2d6b"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "b9aa600e-34b7-4150-a100-b5a7302597f6"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "FunctionArn",
+                    "value": "arn:aws:lambda:us-west-2:069683805197:function:generate-vanity-numbers-ts",
+                    "namespace": null
+                },
+                {
+                    "name": "TimeLimit",
+                    "value": "3"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 543,
+                    "y": 113
+                },
+                "dynamicMetadata": {},
+                "useDynamic": false
+            },
+            "target": "Lambda"
+        },
+        {
+            "id": "82d28644-1bd0-4eef-8a42-eddf184a2d6b",
+            "type": "PlayPrompt",
+            "branches": [
+                {
+                    "condition": "Success",
+                    "transition": "dae5a818-7797-4d66-93bf-87b031141f7d"
+                },
+                {
+                    "condition": "Error",
+                    "transition": "dae5a818-7797-4d66-93bf-87b031141f7d"
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "Text",
+                    "value": "Your possible vanity numbers are: $.External.vanityNumbers",
+                    "namespace": null
+                },
+                {
+                    "name": "TextToSpeechType",
+                    "value": "text"
+                }
+            ],
+            "metadata": {
+                "position": {
+                    "x": 862,
+                    "y": 183
+                },
+                "useDynamic": false
+            }
+        }
+    ],
+    "version": "1",
+    "start": "234ea044-b4a4-4970-95ce-5ed632c3f67f",
+    "metadata": {
+        "entryPointPosition": {
+            "x": 35,
+            "y": 22
+        },
+        "snapToGrid": false,
+        "name": "VoiceFoundry Demo Flow",
+        "description": "This sample flow generates possible vanity numbers based on the caller number",
+        "type": "contactFlow",
+        "status": "published",
+        "hash": "0730ea0c2b2292a113429e6e11b2180af806837ce9b9ddc36552ead442997f98"
+    },
+    "type": "contactFlow"
+}
