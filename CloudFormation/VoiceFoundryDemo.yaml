@@ -69,6 +69,15 @@ Resources:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
 
+  # Toll free number to use with the flow. Since AWS free-tier has some glitch, this part has been commented-out
+  PhoneNumber:
+    Type: 'AWS::Connect::PhoneNumber'
+    Properties:
+      TargetArn: !Ref ConnectInstanceARN
+      Description: Toll free number to use with the flow.
+      Type: TOLL_FREE
+      CountryCode: US
+
   # Demo contact flow with sample content in it.
   # Since creating the content of the contact flows is somehow problematic the content should be imported manually.
   DemoContactFlow:
