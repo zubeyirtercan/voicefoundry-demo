@@ -106,8 +106,25 @@ Creating a Lambda function with CloudFormation via S3 bucket is the easiest and 
         S3Key: artifact.zip
       Runtime: nodejs14.x
 ```
-Therefore 10 buckets have been created and the artifacts copied to each of them with [a batch script](Artifacts/Copy%20Artifacts.ps1).
+Therefore 10 buckets have been created and the artifacts copied to each of them with [a batch script](Artifacts/Copy%20Artifacts.ps1). It would be nice to have only one bucket (or source) to handle this need.
 
 ### Toll Free or DID Number Availability
 
+This demo project is prepared in an AWS account in free-tier. There is a glitch in allocating the phone numbers in Amazon Connect that once you allocate a phone number your free-tier limit is reached and you cannot allocate another number even if you release the first one. 
+
+Therefore in the CloudFormation template the part for allocation a phone number has been commented-out
+
+```yaml
+  PhoneNumber:
+    Type: 'AWS::Connect::PhoneNumber'
+    Properties:
+      TargetArn: !Ref ConnectInstanceARN
+      Description: Toll free number to use with the flow.
+      Type: TOLL_FREE
+      CountryCode: US
+```
+
 ## Improvements
+
+ - Further research can be made on Amazon Connect Flow language
+ - Single file source for Lambda function creation in CloudFormation in different AWS regions
