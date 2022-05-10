@@ -106,7 +106,7 @@ Creating a Lambda function with CloudFormation via S3 bucket is the easiest and 
         S3Key: artifact.zip
       Runtime: nodejs14.x
 ```
-Therefore 10 buckets have been created and the artifacts copied to each of them with [a batch script](Artifacts%5CCopy%20Artifacts.ps1).
+Therefore 10 buckets have been created and the artifacts copied to each of them with [a batch script](Artifacts/Copy%20Artifacts.ps1).
 
 ### Toll Free or DID Number Availability
 
