@@ -34,7 +34,7 @@ Because of the limitations of the Amazon Connect service, the ContactFlow needs 
 - Go to the page Routing > Contact flows 
 - In the contact flow list find "VoiceFoundry Demo Flow" and open it
 - From the combo-button on the top-right corner select "Import flow (beta)"
-- Either use [the file flow in this project](ContactFlow%5CVoiceFoundryDemo.json) or download from [here](https://voicefoundry-artifacts.s3.amazonaws.com/VoiceFoundryDemo.json) and import it into the contact flow.
+- Either use [the flow file in this project](ContactFlow/VoiceFoundryDemo.json) or download from [here](https://voicefoundry-artifacts.s3.amazonaws.com/VoiceFoundryDemo.json) and import it into the contact flow.
 - Now we need to update the Lambda function ARN in the flow. In order to do this go to the Outputs tab of the CloudFormation stack
 - Select and copy the LambdaARN value
 - Back to the flow and find the "Invoke AWS Lambda Function" block and click to open the details.
