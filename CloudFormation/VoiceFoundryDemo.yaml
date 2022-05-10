@@ -69,7 +69,7 @@ Resources:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
 
-  # Toll free number to use with the flow. Since AWS free-tier has some glitch, this part has been commented-out
+  # Toll free number to use with the flow. Since AWS free tier has some glitch, this part has been commented-out
   PhoneNumber:
     Type: 'AWS::Connect::PhoneNumber'
     Properties:
