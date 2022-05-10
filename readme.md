@@ -4,7 +4,7 @@
 
 This project is a demo project for VoiceFoundry. It uses Amazon Connect service as its base and utilizes some other AWS services.
 
-Project implements a contact flow that could be attached to a phone number in Amazon Connect. When a client calls the flow triggers a lambda function to calculate the possible vanity numbers according to the caller's phone number. The Lambda function saves the best 5 of those numbers to the DynamoDB and returns top 3 of them to the flow and flow reads them aloud to the caller. The vanity number are checked against a list of abbreviations scraped from Wikipedia and sorted by length from longest to the shortest.
+Project implements a contact flow that could be attached to a phone number in Amazon Connect. When a client calls the flow triggers a lambda function to calculate the possible vanity numbers according to the caller's phone number. The Lambda function saves the best 5 of those numbers to the DynamoDB and returns top 3 of them to the flow and flow reads them aloud to the caller. The vanity numbers are checked against a list of abbreviations scraped from Wikipedia and sorted by length from longest to the shortest.
 
 There is also a Lambda function that has a public URL to display last 5 records in the DynamoDB. 
 
@@ -39,7 +39,7 @@ Because of the limitations of the Amazon Connect service, the ContactFlow needs 
 - Login into your Amazon Connect instance. Please use Chrome or Firefox
 - Go to the page Routing > Contact flows 
 - In the contact flow list find "VoiceFoundry Demo Flow" and open it
-- From the combo-button on the top-right corner select "Import flow (beta)"
+- From the combo-button in the top-right corner select "Import flow (beta)"
 - Either use [the flow file in this project](ContactFlow/VoiceFoundryDemo.json) or download from [here](https://voicefoundry-artifacts.s3.amazonaws.com/VoiceFoundryDemo.json) and import it into the contact flow.
 - Now we need to update the Lambda function ARN in the flow. To do this, go to the Outputs tab of the CloudFormation stack
 - Select and copy the LambdaARN value
@@ -49,7 +49,7 @@ Because of the limitations of the Amazon Connect service, the ContactFlow needs 
 
 ## Testing
 
-- If you have a toll free or DID number to test you can attach the flow to that number and make a call.
+- If you have a toll-free or DID number to test you can attach the flow to that number and make a call.
 - Vanity numbers will be generated and top 5 of them will be saved to the DynamoDB, top 3 of them will be read to the caller during the flow
 - You can list the last 5 records in the DynamoDB table by clicking the WebpageURL in the CloudFormation outputs tab.
 - The working version of this project can be called at `+1 800-497-0290` and the last 5 records can be listed [here](https://vcfo2xqo6mculbej3onbhsfl2e0qfzaf.lambda-url.us-west-2.on.aws/)
@@ -88,18 +88,18 @@ The DevOps side of Amazon Connect is relatively weak and there are some actions 
 
 AWS has introduced [Amazon Connect Flow language](https://docs.aws.amazon.com/connect/latest/adminguide/flow-language.html) just to overcome these purposes.
 
-> We've provided you with the Flow language so you can:
+> We've provided you with the Flow language, so you can:
 >
 > - Efficiently update contact flows that you are migrating from one instance to another.
 > - Write contact flows rather than drag blocks onto the contact flow designer.
 
-This format is supported by CloudFormation and in this project it is attempted to use as a mean to hold the contact flows. But the documentation does not cover every detail and it is lacking some functions. For example, `Invoke AWS Lambda function` equivalent `InvokeLambdaFunction` method produces HTTP 400 error without any further detail.
+This format is supported by CloudFormation and in this project it is attempted to use as a mean to hold the contact flows. But the documentation does not cover every detail, and it is lacking some functions. For example, `Invoke AWS Lambda function` equivalent `InvokeLambdaFunction` method produces HTTP 400 error without any further detail.
 
 Therefore, automating the contact flow content has been done in manual ways.
 
 ### Region Restriction for Lambda Creation with CloudFormation
 
-Creating a Lambda function with CloudFormation via S3 bucket is the easiest and trouble-free way. When the CF template is run the artifacts of the Lambda function can be retrieved from an S3 bucket that is outside of the template and this way the template can be run without any problems. But there is a region restriction that the bucket from which the artifact will be retrieved has to be in the same region the template runs.
+Creating a Lambda function with CloudFormation via S3 bucket is the easiest and trouble-free way. When the CF template is run the artifacts of the Lambda function can be retrieved from an S3 bucket that is outside the template and this way the template can be run without any problems. But there is a region restriction that the bucket from which the artifact will be retrieved has to be in the same region the template runs.
 
 ```yaml
   SuperLambdaFunction:
@@ -112,9 +112,9 @@ Creating a Lambda function with CloudFormation via S3 bucket is the easiest and 
         S3Key: artifact.zip
       Runtime: nodejs14.x
 ```
-Therefore 10 buckets have been created and the artifacts copied to each of them with [a batch script](Artifacts/Copy%20Artifacts.ps1). It would be nice to have only one bucket (or source) to handle this need.
+Therefore, 10 buckets have been created, and the artifacts copied to each of them with [a batch script](Artifacts/Copy%20Artifacts.ps1). It would be nice to have only one bucket (or source) to handle this need.
 
-### Toll Free or DID Number Availability
+### Toll-Free or DID Number Availability
 
 This demo project is prepared in an AWS account in free tier. There is a glitch in allocating the phone numbers in Amazon Connect that once you allocate a phone number your free-tier limit is reached, and you cannot allocate another number even if you release the first one. 
 
