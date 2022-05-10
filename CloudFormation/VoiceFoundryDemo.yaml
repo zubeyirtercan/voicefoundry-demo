@@ -5,6 +5,8 @@ Parameters:
         Type: String
         Description: Please enter the full ARN of the existing Amazon Connect Instance
 
+# Region mappings for artifact buckets so that the Cloudformation template 
+# can create lambda function on all the regions that supports Amazon Connect
 Mappings: 
   RegionMap: 
     us-east-1:
@@ -29,7 +31,8 @@ Mappings:
       bucketname: voicefoundry-artifacts-eu-west-2
 
 Resources:
-
+  
+  # This bucket will be used when deploying manually from locak computer
   ArtifactsBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
@@ -45,7 +48,8 @@ Resources:
                 - !Split
                   - "/"
                   - !Ref "AWS::StackId"
-
+  
+  # DynamoDB tablo to hold the records of the call and generated vanity numbers
   vanityNumbersTable:
     Type: 'AWS::DynamoDB::Table'
     Properties:
@@ -64,7 +68,9 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
-  
+
+  # Demo contact flow with sample content in it.
+  # Since creating the content of the contact flows is somehow problematic the content should be imported manually.
   DemoContactFlow:
     Type: 'AWS::Connect::ContactFlow'
     Properties:
@@ -73,7 +79,8 @@ Resources:
       InstanceArn: !Ref ConnectInstanceARN
       Type: CONTACT_FLOW
       Content: "{\"Version\":\"2019-10-30\",\"StartAction\":\"32e5247f-7929-44f5-93f5-605ce2317b2c\",\"Actions\":[{\"Identifier\":\"32e5247f-7929-44f5-93f5-605ce2317b2c\",\"Type\":\"MessageParticipant\",\"Transitions\":{\"NextAction\":\"5fa06901-2fc6-4056-a698-97cfb7c6782a\",\"Errors\":[],\"Conditions\":[]},\"Parameters\":{\"Text\":\"Thanks for calling the basic flow!\"}},{\"Identifier\":\"5fa06901-2fc6-4056-a698-97cfb7c6782a\",\"Type\":\"DisconnectParticipant\",\"Transitions\":{},\"Parameters\":{}}]}"
-
+  
+  # The role required for the Lambda functions
   VoiceFoundryLambdaRole:
     Type: 'AWS::IAM::Role'
     Properties:
@@ -102,6 +109,8 @@ Resources:
                   - "logs:PutLogEvents"
                 Resource: '*'
 
+  # The function that generates possible vanity numbers, stores top 5 to the DynamoDB and returns top 3 to the caller flow
+  # The zip file is taken from the corresponding artifact bucket in the same region
   VanityNumbersLambdaFunction:
     Type: 'AWS::Lambda::Function'
     Properties:
@@ -114,6 +123,7 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 3
 
+  # Permission required for Amazon Connect to run the Lambda function
   VanityNumbersConnectPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -121,6 +131,8 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: 'connect.amazonaws.com'
 
+  # Puplic Lambda function that returns a web page as a response that includes last 5 calls to the service
+  # The zip file is taken from the corresponding artifact bucket in the same region
   WebpageLambdaFunction:
     Type: 'AWS::Lambda::Function'
     Properties:
@@ -133,12 +145,14 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 3
   
+  # Adding a URL to the Lambda function
   WebpageFunctionURL:
       Type: AWS::Lambda::Url
       Properties: 
         AuthType: NONE
         TargetFunctionArn: !GetAtt WebpageLambdaFunction.Arn
 
+  # Permissions to reach the URL from public
   LambdaFunctionURLPermission:
      Type: AWS::Lambda::Permission
      Properties:
