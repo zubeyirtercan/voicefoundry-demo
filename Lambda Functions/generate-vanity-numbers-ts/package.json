@@ -8,8 +8,8 @@
     "build": "npm install && tsc",
     "copy": "copy src\\AcronymKeys.csv build && xcopy node_modules\\ build\\node_modules\\ /e /y /d",
     "zip": "7z a -tzip deploy\\generate-vanity-numbers-ts.zip .\\build\\*",
-    "s3-upload": "aws s3 cp .\\deploy\\generate-vanity-numbers-ts.zip s3://voicefoundry-functions",
-    "lambda-update": "aws lambda update-function-code --function-name generate-vanity-numbers-ts --s3-bucket voicefoundry-functions --s3-key generate-vanity-numbers-ts.zip",
+    "s3-upload": "aws s3 cp .\\deploy\\generate-vanity-numbers-ts.zip s3://voicefoundry-artifacts-8106ee20",
+    "lambda-update": "aws lambda update-function-code --function-name generate-vanity-numbers-ts --s3-bucket voicefoundry-artifacts-8106ee20 --s3-key generate-vanity-numbers-ts.zip",
     "deploy": "npm run build && npm run copy && npm run zip && npm run s3-upload && npm run lambda-update"
   },
   "dependencies": {
