@@ -161,6 +161,7 @@ Resources:
        Action: lambda:InvokeFunctionUrl
        Principal: '*'
 
+# Output parameters
 Outputs:
   WebpageURL:
     Description: The URL of the dynamic webpage to display last 5 calls to the flow
