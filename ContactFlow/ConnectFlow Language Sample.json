@@ -1,0 +1,61 @@
+{
+    "Version": "2019-10-30",
+    "StartAction": "32e5247f-7929-44f5-93f5-605ce2317b2c",
+    "Actions": [
+        {
+            "Identifier": "32e5247f-7929-44f5-93f5-605ce2317b2c",
+            "Type": "MessageParticipant",
+            "Transitions": {
+                "NextAction": "780512e7-ad3b-4bd9-9d16-0eeeb5ecf648",
+                "Errors": [],
+                "Conditions": []
+            },
+            "Parameters": {
+                "Text": "Welcome to ScaleFocus call center"
+            }
+        },
+        {
+            "Identifier": "780512e7-ad3b-4bd9-9d16-0eeeb5ecf648",
+            "Type": "InvokeLambdaFunction",
+            "Transitions": {
+                "NextAction": "82d28644-1bd0-4eef-8a42-eddf184a2d6b",
+                "Errors": [],
+                "Conditions": []
+            },
+            "Parameters": {
+                "LambdaFunctionARN": "arn:aws:lambda:us-east-1:069683805197:function:generate-vanity-numbers-ts",
+                "InvocationTimeLimitSeconds": "3"
+            }
+        },
+        {
+            "Identifier": "82d28644-1bd0-4eef-8a42-eddf184a2d6b",
+            "Type": "MessageParticipant",
+            "Transitions": {
+                "NextAction": "dae5a818-7797-4d66-93bf-87b031141f7d",
+                "Errors": [],
+                "Conditions": []
+            },
+            "Parameters": {
+                "Text": "Vanity numbers processed. Your vanity numbers are unknown"
+            }
+        },
+        {
+            "Identifier": "dae5a818-7797-4d66-93bf-87b031141f7d",
+            "Type": "MessageParticipant",
+            "Transitions": {
+                "NextAction": "12b072c1-c677-4a35-b118-b68310ac21e1",
+                "Errors": [],
+                "Conditions": []
+            },
+            "Parameters": {
+                "Text": "Goodbye"
+            }
+        },
+        {
+            "Identifier": "12b072c1-c677-4a35-b118-b68310ac21e1",
+            "Type": "DisconnectParticipant",
+            "Transitions": {},
+            "Parameters": {}
+        }
+    ]
+}

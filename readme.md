@@ -89,11 +89,39 @@ The DevOps side of Amazon Connect is relatively weak and there are some actions 
 AWS has introduced [Amazon Connect Flow language](https://docs.aws.amazon.com/connect/latest/adminguide/flow-language.html) just to overcome these purposes.
 
 > We've provided you with the Flow language, so you can:
->
 > - Efficiently update contact flows that you are migrating from one instance to another.
 > - Write contact flows rather than drag blocks onto the contact flow designer.
 
-This format is supported by CloudFormation and in this project it is attempted to use as a mean to hold the contact flows. But the documentation does not cover every detail, and it is lacking some functions. For example, `Invoke AWS Lambda function` equivalent `InvokeLambdaFunction` method produces HTTP 400 error without any further detail.
+During the development of the demo project some attempts to convert the ContactFlows into Flow Language and the sample flow document can be found [here](/ContactFlow/ConnectFlow%20Language%20Sample.json). The flow language seems to be easy to understand and implement. Some excerpt is included below.
+
+```json
+{
+  "Version": "2019-10-30",
+  "StartAction": "32e5247f-7929-44f5-93f5-605ce2317b2c",
+  "Actions": [
+    {
+      "Identifier": "32e5247f-7929-44f5-93f5-605ce2317b2c",
+      "Type": "MessageParticipant",
+      "Transitions": {
+        "NextAction": "5fa06901-2fc6-4056-a698-97cfb7c6782a",
+        "Errors": [],
+        "Conditions": []
+      },
+      "Parameters": {
+        "Text": "Thanks for calling the basic flow!"
+      }
+    },
+    {
+      "Identifier": "5fa06901-2fc6-4056-a698-97cfb7c6782a",
+      "Type": "DisconnectParticipant",
+      "Transitions": {},
+      "Parameters": {}
+    }
+  ]
+}
+```
+
+This format is officially supported by CloudFormation. But the documentation does not cover every detail, and it is lacking some functions. For example, `Invoke AWS Lambda function` equivalent `InvokeLambdaFunction` method produces HTTP 400 error without any further detail.
 
 Therefore, automating the contact flow content has been done in manual ways.
 
