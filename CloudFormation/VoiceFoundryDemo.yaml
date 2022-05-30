@@ -31,7 +31,7 @@ Mappings:
       bucketname: voicefoundry-artifacts-eu-west-2
 
 Resources:
-  # This bucket will be used when deploying manually from locak computer
+  # This bucket will be used when deploying manually from local computer
   ArtifactsBucket:
     Type: "AWS::S3::Bucket"
     Properties:
@@ -48,7 +48,7 @@ Resources:
                   - "/"
                   - !Ref "AWS::StackId"
 
-  # DynamoDB tablo to hold the records of the call and generated vanity numbers
+  # DynamoDB table to hold the records of the call and generated vanity numbers
   vanityNumbersTable:
     Type: "AWS::DynamoDB::Table"
     Properties:
