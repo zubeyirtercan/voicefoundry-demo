@@ -30,7 +30,7 @@ The CloudFormation template has been designed in a way that you do not need to c
 
 If you meet the prerequisites above, you can launch the stack. Please use the region on which your Amazon Connect instance resides. All the resources will be created automatically.
 
-[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=VoiceFoundryDemo&templateURL=https://voicefoundry-artifacts.s3.amazonaws.com/VoiceFoundryDemo.yaml)
+[![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=VoiceFoundryDemo&templateURL=https://voicefoundry-artifacts.s3.amazonaws.com/CloudFormation/VoiceFoundryDemoTemplate.yaml)
 
 ### Updating the ContactFlow
 
