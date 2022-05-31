@@ -8,8 +8,8 @@
     "build": "npm install && tsc",
     "copy": "copy src\\body.html build && xcopy node_modules\\ build\\node_modules\\ /e /y /d",
     "zip": "7z a -tzip deploy\\webpage-ts.zip .\\build\\*",
-    "s3-upload": "aws s3 cp .\\deploy\\webpage-ts.zip s3://voicefoundry-artifacts-8106ee20",
-    "lambda-update": "aws lambda update-function-code --function-name webpage-ts --s3-bucket voicefoundry-artifacts-8106ee20 --s3-key webpage-ts.zip",
+    "s3-upload": "aws s3 cp .\\deploy\\webpage-ts.zip s3://ArtifactsBucketName/LambdaFunctions/",
+    "lambda-update": "aws lambda update-function-code --function-name WebpageLambdaFunctionName --s3-bucket ArtifactsBucketName --s3-key LambdaFunctions/webpage-ts.zip",
     "deploy": "npm run build && npm run copy && npm run zip && npm run s3-upload && npm run lambda-update"
   },
   "dependencies": {
