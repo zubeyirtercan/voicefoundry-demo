@@ -37,7 +37,7 @@ const handler = (event: any, context: Context, callback: Callback) => {
     console.info({ selectedWords });
 
     let dbParams: AWS.DynamoDB.DocumentClient.PutItemInput = {
-        TableName: "vanityNumbers",
+        TableName: process.env.DatabaseName ?? "DatabaseNameEnvironmentVariableMissing",
         Item: {
             phoneNumber: phoneNumber,
             recordDate: Date.now(),

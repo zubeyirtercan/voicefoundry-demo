@@ -5,7 +5,7 @@ export async function getRecords() {
     let docClient = new AWS.DynamoDB.DocumentClient();
 
     let dbParams: AWS.DynamoDB.DocumentClient.QueryInput = {
-        TableName: 'vanityNumbers',
+        TableName: process.env.DatabaseName ?? "DatabaseNameEnvironmentVariableMissing",
         Limit: 5,
     };
 
