@@ -23,15 +23,7 @@ Resources:
       BucketName: !Join
         - "-"
         - - "voicefoundry-artifacts"
-          - !Select
-            - 0
-            - !Split
-              - "-"
-              - !Select
-                - 2
-                - !Split
-                  - "/"
-                  - !Ref "AWS::StackId"
+          - !Select [ 0, !Split ["-", !Select [2, !Split ["/", !Ref "AWS::StackId"]]], ]
 
   # DynamoDB table to hold the records of the call and generated vanity numbers
   vanityNumbersTable:
