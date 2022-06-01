@@ -158,7 +158,7 @@
             "parameters": [
                 {
                     "name": "Text",
-                    "value": "Your possible vanity numbers are: $.External.vanityNumbers",
+                    "value": "Your first 3 possible vanity numbers are: $.External.vanityNumbers",
                     "namespace": null
                 },
                 {
