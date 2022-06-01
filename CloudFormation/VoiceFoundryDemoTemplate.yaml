@@ -40,25 +40,10 @@ Resources:
         ConnectInstanceARN: !Ref ConnectInstanceARN
         CreatePhoneNumber: !Ref CreatePhoneNumber
 
-  # DynamoDB table to hold the records of the call and generated vanity numbers
-  vanityNumbersTable:
-    Type: "AWS::DynamoDB::Table"
+  DatabaseStack:
+    Type: AWS::CloudFormation::Stack
     Properties:
-      TableName: vanityNumbers
-      BillingMode: PAY_PER_REQUEST
-      AttributeDefinitions:
-        - AttributeName: phoneNumber
-          AttributeType: S
-        - AttributeName: recordDate
-          AttributeType: N
-      KeySchema:
-        - AttributeName: phoneNumber
-          KeyType: HASH
-        - AttributeName: recordDate
-          KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 0
-        WriteCapacityUnits: 0
+      TemplateURL: "https://voicefoundry-artifacts.s3.us-east-1.amazonaws.com/CloudFormation/DatabaseStack.yaml"
 
   # The role required for the Lambda functions
   VoiceFoundryLambdaRole:
