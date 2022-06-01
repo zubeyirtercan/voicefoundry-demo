@@ -44,4 +44,4 @@ Outputs:
   PhoneNumber:
     Description: Phone number created
     Condition: CreatePhoneNumberCondition
-    Value: !Ref PhoneNumber
+    Value: !GetAtt PhoneNumber.Address

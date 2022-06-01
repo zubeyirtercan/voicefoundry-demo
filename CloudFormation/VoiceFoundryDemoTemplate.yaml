@@ -67,4 +67,4 @@ Outputs:
   PhoneNumber:
     Description: Phone number created
     Condition: CreatePhoneNumberCondition
-    Value: !Ref ConnectObjects.Outputs.PhoneNumber
+    Value: !GetAtt ConnectObjects.Outputs.PhoneNumber
