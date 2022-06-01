@@ -6,6 +6,13 @@ Parameters:
     Description: Please enter the full ARN of the existing Amazon Connect Instance
     AllowedPattern: ".+"
     ConstraintDescription: ConnectInstanceARN parameter cannot be blank
+  CreatePhoneNumber:
+    Description: If you want this template to create an AWS Connect phone number please select. If you already have a phone number, you can use it with your flow
+    Type: String
+    Default: No
+    AllowedValues:
+      - Yes
+      - No
 
 # Region mappings for artifact buckets so that the Cloudformation template
 # can create lambda function on all the regions that supports Amazon Connect
@@ -24,6 +31,14 @@ Resources:
         - "-"
         - - "voicefoundry-artifacts"
           - !Select [ 0, !Split ["-", !Select [2, !Split ["/", !Ref "AWS::StackId"]]], ]
+
+  ConnectObjects:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: "https://voicefoundry-artifacts.s3.us-east-1.amazonaws.com/CloudFormation/ConnectObjects.yaml"
+      Parameters:
+        ConnectInstanceARN: !Ref ConnectInstanceARN
+        CreatePhoneNumber: !Ref CreatePhoneNumber
 
   # DynamoDB table to hold the records of the call and generated vanity numbers
   vanityNumbersTable:
@@ -44,26 +59,6 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 0
         WriteCapacityUnits: 0
-
-  # Toll free number to use with the flow. Since AWS free tier has some glitch, this part has been commented-out
-  # PhoneNumber:
-  #   Type: 'AWS::Connect::PhoneNumber'
-  #   Properties:
-  #     TargetArn: !Ref ConnectInstanceARN
-  #     Description: Toll free number to use with the flow.
-  #     Type: TOLL_FREE
-  #     CountryCode: US
-
-  # Demo contact flow with sample content in it.
-  # Since creating the content of the contact flows is somehow problematic the content should be imported manually.
-  DemoContactFlow:
-    Type: "AWS::Connect::ContactFlow"
-    Properties:
-      Name: Voice Foundry Demo ContactFlow
-      Description: This demo flow has been created as a placeholder. Please replate it with the actual flow by importing the JSON file
-      InstanceArn: !Ref ConnectInstanceARN
-      Type: CONTACT_FLOW
-      Content: '{"Version":"2019-10-30","StartAction":"32e5247f-7929-44f5-93f5-605ce2317b2c","Actions":[{"Identifier":"32e5247f-7929-44f5-93f5-605ce2317b2c","Type":"MessageParticipant","Transitions":{"NextAction":"5fa06901-2fc6-4056-a698-97cfb7c6782a","Errors":[],"Conditions":[]},"Parameters":{"Text":"Thanks for calling the basic flow!"}},{"Identifier":"5fa06901-2fc6-4056-a698-97cfb7c6782a","Type":"DisconnectParticipant","Transitions":{},"Parameters":{}}]}'
 
   # The role required for the Lambda functions
   VoiceFoundryLambdaRole:
