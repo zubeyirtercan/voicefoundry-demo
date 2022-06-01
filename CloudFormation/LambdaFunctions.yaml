@@ -16,7 +16,7 @@ Parameters:
 Resources:
   # The role required for the Lambda functions
   VoiceFoundryLambdaRole:
-    Type: "AWS::IAM::Role"
+    Type: AWS::IAM::Role
     Properties:
       Description: VoiceFoundry Lambda execution role
       AssumeRolePolicyDocument:

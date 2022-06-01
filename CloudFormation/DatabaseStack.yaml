@@ -3,7 +3,7 @@ AWSTemplateFormatVersion: 2010-09-09
 Resources:
   # DynamoDB table to hold the records of the call and generated vanity numbers
   vanityNumbersTable:
-    Type: "AWS::DynamoDB::Table"
+    Type: AWS::DynamoDB::Table
     Properties:
       #TableName: vanityNumbers
       BillingMode: PAY_PER_REQUEST

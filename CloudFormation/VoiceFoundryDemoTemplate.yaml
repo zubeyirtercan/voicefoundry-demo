@@ -25,7 +25,7 @@ Mappings:
 Resources:
   # This bucket will be used when deploying manually from local computer
   ArtifactsBucket:
-    Type: "AWS::S3::Bucket"
+    Type: AWS::S3::Bucket
     Properties:
       BucketName: !Join
         - "-"

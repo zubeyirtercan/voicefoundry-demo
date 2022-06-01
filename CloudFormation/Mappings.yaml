@@ -1,6 +1,6 @@
 RegionMap:
   af-south-1:
-    bucketname: voicefoundry-artifacts-af-south-1  
+    bucketname: voicefoundry-artifacts-af-south-1
   ap-northeast-1:
     bucketname: voicefoundry-artifacts-ap-northeast-1
   ap-northeast-2:

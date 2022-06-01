@@ -6,7 +6,7 @@ Parameters:
     Description: Please enter the full ARN of the existing Amazon Connect Instance
     AllowedPattern: ".+"
     ConstraintDescription: ConnectInstanceARN parameter cannot be blank
-  
+
   CreatePhoneNumber:
     Description: If you want this template to create an AWS Connect phone number please select. If you already have a phone number, you can use it with your flow
     Type: String
@@ -14,14 +14,14 @@ Parameters:
     AllowedValues:
       - Yes
       - No
-  
+
 Conditions:
   CreatePhoneNumberCondition: !Equals [!Ref CreatePhoneNumber, Yes]
 
 Resources:
   # Toll free number to use with the flow.
   PhoneNumber:
-    Type: 'AWS::Connect::PhoneNumber'
+    Type: AWS::Connect::PhoneNumber
     Condition: CreatePhoneNumberCondition
     Properties:
       TargetArn: !Ref ConnectInstanceARN
@@ -32,7 +32,7 @@ Resources:
   # Demo contact flow with sample content in it.
   # The contact flow here is a placeholder. After creating the flow the content of it should be updated manually.
   DemoContactFlow:
-    Type: "AWS::Connect::ContactFlow"
+    Type: AWS::Connect::ContactFlow
     Properties:
       Name: Voice Foundry Demo ContactFlow
       Description: This demo flow has been created as a placeholder. Please replace it with the actual flow by importing the JSON file in the project
