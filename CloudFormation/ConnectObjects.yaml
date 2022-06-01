@@ -39,3 +39,9 @@ Resources:
       InstanceArn: !Ref ConnectInstanceARN
       Type: CONTACT_FLOW
       Content: '{"Version":"2019-10-30","StartAction":"32e5247f-7929-44f5-93f5-605ce2317b2c","Actions":[{"Identifier":"32e5247f-7929-44f5-93f5-605ce2317b2c","Type":"MessageParticipant","Transitions":{"NextAction":"5fa06901-2fc6-4056-a698-97cfb7c6782a","Errors":[],"Conditions":[]},"Parameters":{"Text":"Thanks for calling the basic flow!"}},{"Identifier":"5fa06901-2fc6-4056-a698-97cfb7c6782a","Type":"DisconnectParticipant","Transitions":{},"Parameters":{}}]}'
+
+Outputs:
+  PhoneNumber:
+    Description: Phone number created
+    Condition: CreatePhoneNumberCondition
+    Value: !Ref PhoneNumber

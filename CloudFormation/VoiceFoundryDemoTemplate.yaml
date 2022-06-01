@@ -69,3 +69,7 @@ Outputs:
   WebpageLambdaFunctionName:
     Description: The name of the webpage Lambda function. You can use this value to manually publish this function
     Value: !GetAtt LambdaFunctions.Outputs.WebpageLambdaFunctionName
+  PhoneNumber:
+    Description: Phone number created
+    Condition: CreatePhoneNumberCondition
+    Value: !Ref ConnectObjects.Outputs.PhoneNumber
