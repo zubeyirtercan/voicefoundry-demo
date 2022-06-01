@@ -14,13 +14,8 @@ Parameters:
       - Yes
       - No
 
-# Region mappings for artifact buckets so that the Cloudformation template
-# can create lambda function on all the regions that supports Amazon Connect
-Mappings:
-  Fn::Transform:
-    Name: AWS::Include
-    Parameters:
-      Location: s3://voicefoundry-artifacts/CloudFormation/Mappings.yaml
+Conditions:
+  CreatePhoneNumberCondition: !Equals [!Ref CreatePhoneNumber, Yes]
 
 Resources:
   # This bucket will be used when deploying manually from local computer
