@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+# Region mappings for artifact buckets so that the Cloudformation template
+# can create lambda function on all the regions that supports Amazon Connect
+Mappings:
+  Fn::Transform:
+    Name: AWS::Include
+    Parameters:
+      Location: s3://voicefoundry-artifacts/CloudFormation/Mappings.yaml
+
+Parameters:
+  DynamoDBName:
+    Description: The name of the DynamoDB database instance
+    Type: String
+
+Resources:
+  # The role required for the Lambda functions
+  VoiceFoundryLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Description: VoiceFoundry Lambda execution role
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: voicefoundry-inline-policy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "lambda:*"
+                  - "dynamodb:*"
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
+
+  # The function that generates possible vanity numbers, stores top 5 to the DynamoDB and returns top 3 to the caller flow
+  # The zip file is taken from the corresponding artifact bucket in the same region
+  VanityNumbersLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt VoiceFoundryLambdaRole.Arn
+      Code:
+        S3Bucket: !FindInMap [RegionMap, !Ref "AWS::Region", bucketname]
+        S3Key: LambdaFunctions/generate-vanity-numbers-ts.zip
+      Runtime: nodejs14.x
+      Timeout: 3
+      Environment:
+        Variables:
+          DatabaseName: !Ref DynamoDBName
+
+  # Permission required for Amazon Connect to run the Lambda function
+  VanityNumbersConnectPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref VanityNumbersLambdaFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "connect.amazonaws.com"
+
+  # Puplic Lambda function that returns a web page as a response that includes last 5 calls to the service
+  # The zip file is taken from the corresponding artifact bucket in the same region
+  WebpageLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: app.lambdaHandler
+      Role: !GetAtt VoiceFoundryLambdaRole.Arn
+      Code:
+        S3Bucket: !FindInMap [RegionMap, !Ref "AWS::Region", bucketname]
+        S3Key: LambdaFunctions/webpage-ts.zip
+      Runtime: nodejs14.x
+      Timeout: 3
+      Environment:
+        Variables:
+          DatabaseName: !Ref DynamoDBName
+
+  # Adding a URL to the Lambda function
+  WebpageFunctionURL:
+    Type: AWS::Lambda::Url
+    Properties:
+      AuthType: NONE
+      TargetFunctionArn: !GetAtt WebpageLambdaFunction.Arn
+
+  # Permissions to reach the URL from public
+  LambdaFunctionURLPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref WebpageLambdaFunction
+      FunctionUrlAuthType: "NONE"
+      Action: lambda:InvokeFunctionUrl
+      Principal: "*"
+
+# Output parameters
+Outputs:
+  WebpageURL:
+    Description: The URL of the dynamic webpage to display last 5 calls to the flow
+    Value: !GetAtt WebpageFunctionURL.FunctionUrl
+  LambdaARN:
+    Description: The ARN of the Lambda function that is going to be used in ContactFlow
+    Value: !GetAtt VanityNumbersLambdaFunction.Arn
+  VanityNumbersLambdaFunctionName:
+    Description: The name of the vanity number Lambda function. You can use this value to manually publish this function
+    Value: !Ref VanityNumbersLambdaFunction
+  WebpageLambdaFunctionName:
+    Description: The name of the webpage Lambda function. You can use this value to manually publish this function
+    Value: !Ref WebpageLambdaFunction
