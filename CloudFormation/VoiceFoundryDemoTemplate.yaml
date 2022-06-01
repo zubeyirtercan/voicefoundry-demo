@@ -4,6 +4,8 @@ Parameters:
   ConnectInstanceARN:
     Type: String
     Description: Please enter the full ARN of the existing Amazon Connect Instance
+    AllowedPattern: ".+"
+    ConstraintDescription: ConnectInstanceARN parameter cannot be blank
 
 # Region mappings for artifact buckets so that the Cloudformation template
 # can create lambda function on all the regions that supports Amazon Connect
