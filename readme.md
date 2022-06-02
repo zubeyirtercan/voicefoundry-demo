@@ -21,14 +21,16 @@ This demo project uses the following AWS services
 
 ## Setup
 
-The CloudFormation template has been designed in a way that you do not need to compile anything on your local machine unless you explicitly want to do so. Therefore, two setup options has been included.
+The CloudFormation template has been designed in a way that you do not need to compile anything on your local machine unless you explicitly want to do so. If you prefer, you can manually compile the Lambda functions locally and upload to your AWS environment by using ready to use commands.
 
-### Prerequisites
-- AWS Account
-- An Amazon Connect instance
-- Preferably a phone number attached to the Connect Instance to test the flow (optional)
+### Steps
+1. Create an AWS account (if you do not one have already)
+2. Create an Amazon Connect instance (if you do not have one already)
+3. Launch the stack into the region in which you create (or have created) your Amazon Connect instance. All the resources will be created automatically.
+4. Update the ContactFlow that is created by the template as described below.
+5. Do some testing
+6. Delete the stack if you prefer
 
-If you meet the prerequisites above, you can launch the stack. Please use the region on which your Amazon Connect instance resides. All the resources will be created automatically.
 
 [![Launch Stack](https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=VoiceFoundryDemo&templateURL=https://voicefoundry-artifacts.s3.amazonaws.com/CloudFormation/VoiceFoundryDemoTemplate.yaml)
 
@@ -40,19 +42,24 @@ Because of the limitations of the Amazon Connect service, the ContactFlow needs 
 - Go to the page Routing > Contact flows 
 - In the contact flow list find "VoiceFoundry Demo Flow" and open it
 - From the combo-button in the top-right corner select "Import flow (beta)"
-- Either use [the flow file in this project](ContactFlow/VoiceFoundryDemoContactFlow.json) or download from [here](https://voicefoundry-artifacts.s3.amazonaws.com/ContactFlow/VoiceFoundryDemoContactFlow.json) and import it into the contact flow.
+- Either use [VoiceFoundryDemoContactFlow.json file in this project](ContactFlow/VoiceFoundryDemoContactFlow.json) or download from [here](https://voicefoundry-artifacts.s3.amazonaws.com/ContactFlow/VoiceFoundryDemoContactFlow.json) and import it into the contact flow.
 - Now we need to update the Lambda function ARN in the flow. To do this, go to the Outputs tab of the CloudFormation stack
 - Select and copy the LambdaARN value
 - Back to the flow and find the "Invoke AWS Lambda Function" block and click to open the details.
 - Paste the function ARN in the clipboard into the "Function ARN" selector directly.
 - Publish the flow by clicking "Publish"
+- Go to the phone numbers in the Amazon Connect console and assign the ContactFlow to it. If you do not have a phone number or did not let the template create one for you, you can claim a number in Amazon Connect console.
 
 ## Testing
 
-- If you have a toll-free or DID number to test you can attach the flow to that number and make a call.
-- Vanity numbers will be generated and top 5 of them will be saved to the DynamoDB, top 3 of them will be read to the caller during the flow
+- Call your phone number to initiate the ContactFlow you attached.
+- Vanity numbers will be generated and top 5 of them will be saved to the DynamoDB, top 3 of them will be read back to the caller during the flow.
 - You can list the last 5 records in the DynamoDB table by clicking the WebpageURL in the CloudFormation outputs tab.
-- The working version of this project can be called at `+1 800-497-0290` and the last 5 records can be listed [here](https://vcfo2xqo6mculbej3onbhsfl2e0qfzaf.lambda-url.us-west-2.on.aws/)
+- The working version of this project can be called at `+1 800-497-0290` and the last 5 records can be listed [here](https://yiq4g7yxx6xenfbr47saput3fq0bboas.lambda-url.us-west-2.on.aws/)
+
+## Deleting the stack
+
+You can delete the stack from via CloudFormation console. This way the template will delete all the resources it has created. Before initiating the delete command, you need to detach the contact flow from the phone number. Otherwise, you will get a "resource in use" error.
 
 ## Lambda Functions Manual Deployment
 
@@ -75,7 +82,8 @@ Both of those functions are written in TypeScript and can be compiled and deploy
 
 - Fully download this project to your locale
 - Go to the root folder (folder above src folder) of either function.
-- Open `package.json` file and find the occurrences of `voicefoundry-artifacts-8106ee20` and replace it with the `ArtifactsBucket` value from the Outputs tab in the CloudFormation result page. Please note that the bucket name occurs twice in the package file.
+- Open `package.json` file and replace all occurrences of `ArtifactsBucketName` and with `ArtifactsBucket` value from the Outputs tab in the CloudFormation result page. Please note that the bucket name occurs twice in the package file.
+- In the same `package.json` file find `VanityNumbersLambdaFunctionName` or `WebpageLambdaFunctionName` and replace it with the appropriate value from the Outputs tab.
 - If you have 7-Zip installed it will be used automatically. But if you prefer to use any other compression utility, please update the `zip` command in the `package.json` file.
 - Open the terminal window and type `npm run deploy`
 - This command will install all the packages, build the project, zip it, upload the S3 bucket generated by the CloudFormation template and update the Lambda function automatically.
@@ -142,22 +150,6 @@ Creating a Lambda function with CloudFormation via S3 bucket is the easiest and 
 ```
 Therefore, 10 buckets have been created, and the artifacts copied to each of them with [a batch script](Artifacts/Copy%20Artifacts.ps1). It would be nice to have only one bucket (or source) to handle this need.
 
-### Toll-Free or DID Number Availability
-
-This demo project is prepared in an AWS account in free tier. There is a glitch in allocating the phone numbers in Amazon Connect that once you allocate a phone number your free-tier limit is reached, and you cannot allocate another number even if you release the first one. 
-
-Therefore, in the CloudFormation template the part for allocation a phone number has been commented-out
-
-```yaml
-  PhoneNumber:
-    Type: 'AWS::Connect::PhoneNumber'
-    Properties:
-      TargetArn: !Ref ConnectInstanceARN
-      Description: Toll free number to use with the flow.
-      Type: TOLL_FREE
-      CountryCode: US
-```
-
 ### Manual Deployment Process
 
 For security reasons one can prefer to build and deploy the Lambda functions locally. Since this process might be tricky sometimes, some `npm run` commands has been prepared. 
@@ -168,7 +160,7 @@ Only running `npm run deploy` command will install all the packages, build the p
 
  - Further research can be made on Amazon Connect Flow language
  - Single file source for Lambda function creation in CloudFormation in different AWS regions
- - Vanity number determination could be done in a more language-oriented way, probably with an online service
+ - Vanity number determination could be done in a more linguistically correct way, probably with an online service
 
 ## Architecture Diagram
 
