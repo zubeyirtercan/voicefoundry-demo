@@ -55,7 +55,6 @@ Because of the limitations of the Amazon Connect service, the ContactFlow needs 
 - Call your phone number to initiate the ContactFlow you attached.
 - Vanity numbers will be generated and top 5 of them will be saved to the DynamoDB, top 3 of them will be read back to the caller during the flow.
 - You can list the last 5 records in the DynamoDB table by clicking the WebpageURL in the CloudFormation outputs tab.
-- The working version of this project can be called at `+1 800-497-0290` and the last 5 records can be listed [here](https://yiq4g7yxx6xenfbr47saput3fq0bboas.lambda-url.us-west-2.on.aws/)
 
 ## Deleting the stack
 
@@ -161,6 +160,7 @@ Only running `npm run deploy` command will install all the packages, build the p
  - Further research can be made on Amazon Connect Flow language
  - Single file source for Lambda function creation in CloudFormation in different AWS regions
  - Vanity number determination could be done in a more linguistically correct way, probably with an online service
+ - Deleting the S3 bucket automatically
 
 ## Architecture Diagram
 
